@@ -1973,6 +1973,74 @@ body.cursor-hover .cursor {
   }
 }
 
+
+/* ===== CONTACT POPUP ===== */
+.contact-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 4, 5, 0.78);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .25s ease, visibility .25s ease;
+}
+.contact-overlay.active { opacity: 1; visibility: visible; }
+.contact-box {
+  position: relative;
+  min-width: min(340px, calc(100vw - 40px));
+  padding: 34px 40px 36px;
+  text-align: center;
+  border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(145deg, rgba(255,255,255,.04), rgba(255,23,77,.06)), var(--black-soft);
+  box-shadow: 0 24px 80px rgba(0,0,0,.6), 0 0 40px rgba(255,23,77,.12);
+  transform: translateY(12px) scale(.96);
+  transition: transform .25s ease;
+}
+.contact-overlay.active .contact-box { transform: none; }
+.contact-title {
+  margin: 0 0 22px;
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--text-hi);
+  text-shadow: 0 0 20px rgba(255,23,77,.35);
+}
+.contact-discord {
+  display: inline-block;
+  padding: 14px 44px;
+  border: 1px solid var(--panel-border-hover);
+  border-radius: var(--radius-md);
+  background: rgba(255,23,77,.14);
+  color: var(--text-hi);
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.contact-discord:hover {
+  background: rgba(255,23,77,.3);
+  box-shadow: 0 0 24px rgba(255,23,77,.35);
+  transform: translateY(-2px);
+}
+.contact-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  border: 0;
+  background: transparent;
+  color: var(--text-mid);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+.contact-close:hover { color: var(--text-hi); }
+
 </style>
 
 </head>
@@ -2766,6 +2834,15 @@ body.cursor-hover .cursor {
 </div>
 
 
+
+
+<div class="contact-overlay" id="contactOverlay">
+  <div class="contact-box" role="dialog" aria-modal="true">
+    <button class="contact-close" id="contactClose" type="button" aria-label="Close">&times;</button>
+    <h3 class="contact-title">Contact</h3>
+    <a class="contact-discord" href="https://discord.gg/6xsY2KZUhq" target="_blank" rel="noopener noreferrer">Discord</a>
+  </div>
+</div>
 
 <script>
 
@@ -3574,75 +3651,18 @@ function buyProduct(
   priceEGP
 ) {
 
-  const country =
-    countries[
-      countrySelect.value
-    ];
-
-  const finalPrice =
-    priceEGP *
-    country.rate;
-
-  console.log({
-    product:
-      productName,
-
-    basePriceEGP:
-      priceEGP,
-
-    currency:
-      country.currency,
-
-    displayedPrice:
-      finalPrice
-  });
-
-
-  /*
-     هنا يتم وضع رابط الدفع الحقيقي
-     أو API الخاص بالـ M3-Fire Dashboard.
-
-     مثال:
-
-     window.location.href =
-       "YOUR_PAYMENT_URL";
-  */
-
-
-  const language =
-    languageSelect.value;
-
-  if (language === "ar") {
-
-    alert(
-      "المنتج: " +
-      productName +
-      "\nالسعر: " +
-      formatPrice(
-        finalPrice,
-        country.currency
-      ) +
-      " " +
-      country.currency
-    );
-
-  } else {
-
-    alert(
-      "Product: " +
-      productName +
-      "\nPrice: " +
-      formatPrice(
-        finalPrice,
-        country.currency
-      ) +
-      " " +
-      country.currency
-    );
-
-  }
+  document
+    .getElementById("contactOverlay")
+    .classList.add("active");
 
 }
+
+(function () {
+  const overlay = document.getElementById("contactOverlay");
+  document.getElementById("contactClose").addEventListener("click", () => overlay.classList.remove("active"));
+  overlay.addEventListener("click", e => { if (e.target === overlay) overlay.classList.remove("active"); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") overlay.classList.remove("active"); });
+})();
 
 
 /* ============================================================
